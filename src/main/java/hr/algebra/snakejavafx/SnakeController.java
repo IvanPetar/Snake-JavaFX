@@ -5,20 +5,30 @@ import hr.algebra.snakejavafx.model.Direction;
 import hr.algebra.snakejavafx.model.GameState;
 import hr.algebra.snakejavafx.model.Position;
 import hr.algebra.snakejavafx.utils.DialogUtils;
+import hr.algebra.snakejavafx.utils.DocumentationUtils;
+import hr.algebra.snakejavafx.utils.SaveLoadUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
 public class SnakeController {
+
+    private static final Logger log
+            = LoggerFactory.getLogger(SnakeController.class);
+
     @FXML
     private Canvas gameCanvas;
 
@@ -125,11 +135,34 @@ public class SnakeController {
     }
 
     public void saveGame(){
-
+        SaveLoadUtils.saveGame(engine.getState());
     }
 
     public void loadGame(){
+        GameState loaded = SaveLoadUtils.loadGame();
 
+        if (loaded != null) {
+            engine.loadGameState(loaded);
+            popupShown = false;
+            pauseBtn.setText("Pause");
+            gameCanvas.requestFocus();
+        }
+    }
+
+    public void generateDocumentation(){
+        try {
+            DocumentationUtils.generateHtmlDocumentationFile();
+            DialogUtils.showDialog("Uspjesno generirana dokumentacija!",
+                    "HTML dokumentacija za aplikaciju je uspjesno generirana"
+                    , Alert.AlertType.INFORMATION);
+        } catch (IOException e) {
+            String message = "Doslo do pogreske kod generiranje HTML DOKUMENTA";
+            DialogUtils.showDialog("Pogreska!",
+                    message,
+                    Alert.AlertType.INFORMATION);
+            log.error(e.getMessage());
+
+        }
     }
 
 }

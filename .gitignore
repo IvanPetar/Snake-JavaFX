@@ -37,3 +37,12 @@ build/
 
 ### Mac OS ###
 .DS_Store
+# Intellij IDEA (global)
+.idea/
+# Maven
+/target/
+# Runtime game data
+/game/
+snake.dat
+# Generated dcumentation
+/doc/

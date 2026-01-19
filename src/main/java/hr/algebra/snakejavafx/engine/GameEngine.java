@@ -4,6 +4,7 @@ import hr.algebra.snakejavafx.model.Direction;
 import hr.algebra.snakejavafx.model.GameState;
 import hr.algebra.snakejavafx.model.Position;
 import javafx.fxml.FXML;
+import lombok.Getter;
 
 import java.util.Random;
 
@@ -12,6 +13,7 @@ public class GameEngine {
     private final int rows;
     private final int cols;
 
+    @Getter
     private final GameState state;
     private final Random random = new Random();
 
@@ -20,10 +22,6 @@ public class GameEngine {
         this.cols = cols;
         this.state = new GameState();
         spawnFood();
-    }
-
-    public GameState getState() {
-        return state;
     }
 
     public void tick() {
@@ -96,5 +94,18 @@ public class GameEngine {
         state.setDirection(Direction.RIGHT);
         spawnFood();
     }
+
+    public void loadGameState(GameState loaded) {
+        state.getSnake().clear();
+        state.getSnake().addAll(loaded.getSnake());
+
+        state.setFood(loaded.getFood());
+        state.setDirection(loaded.getDirection());
+        state.setScore(loaded.getScore());
+        state.setRunning(loaded.isRunning());
+        state.setPaused(loaded.isPaused());
+        state.setGameOver(loaded.isGameOver());
+    }
+
 }
 

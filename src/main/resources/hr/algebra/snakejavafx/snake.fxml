@@ -33,6 +33,11 @@
                         <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Load"/>
                     </items>
                 </Menu>
+                <Menu mnemonicParsing="false" text="Documentation">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#generateDocumentation" text="Generate"/>
+                    </items>
+                </Menu>
             </menus>
         </MenuBar>
     </children>
