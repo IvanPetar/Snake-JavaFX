@@ -1,11 +1,13 @@
 package hr.algebra.snakejavafx.engine;
 
+import hr.algebra.snakejavafx.SnakeApplication;
 import hr.algebra.snakejavafx.model.Direction;
 import hr.algebra.snakejavafx.model.GameState;
+import hr.algebra.snakejavafx.model.PlayerType;
 import hr.algebra.snakejavafx.model.Position;
-import javafx.fxml.FXML;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Random;
 
 public class GameEngine {
@@ -14,98 +16,185 @@ public class GameEngine {
     private final int cols;
 
     @Getter
-    private final GameState state;
+    private GameState state;
+
     private final Random random = new Random();
 
     public GameEngine(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         this.state = new GameState();
-        spawnFood();
+        spawnFood(SnakeApplication.playerType);
     }
+    public void tick(PlayerType mode) {
+        if (!state.isRunning() || state.isPaused() || state.isGameOver()) return;
 
-    public void tick() {
-        if (!state.isRunning() || state.isPaused()) return;
+        moveSnake(
+                state.getSnakeP1(),
+                state.getChangeDirectionP1(),
+                PlayerType.PLAYER_1
+        );
 
-        Position nextHead = calculateNextHead();
+        if (mode != PlayerType.SINGLE_PLAYER) {
+            moveSnake(
+                    state.getSnakeP2(),
+                    state.getChangeDirectionP2(),
+                    PlayerType.PLAYER_2
+            );
+        }
+    }
+    private void moveSnake(List<Position> snake,
+                           Direction direction,
+                           PlayerType player) {
 
-        if (checkCollision(nextHead)) {
-            state.setRunning(false);
-            state.setGameOver(true);
+        Position head = snake.get(0);
+        Position next = head.move(direction);
+
+        if (checkWallCollision(next) ||
+                checkSnakeCollision(next, snake) ||
+                checkEnemyCollision(next, player)) {
+
+            finishGame(player == PlayerType.PLAYER_1
+                    ? PlayerType.PLAYER_2
+                    : PlayerType.PLAYER_1);
             return;
         }
 
-        applyMove(nextHead);
-    }
+        snake.add(0, next);
 
-    private Position calculateNextHead() {
-        Position head = state.getSnake().get(0);
-        return head.move(state.getDirection());
-    }
-
-    private boolean checkCollision(Position nextHead) {
-        if (nextHead.row() < 0 || nextHead.row() >= rows ||
-                nextHead.col() < 0 || nextHead.col() >= cols) {
-            return true;
+        if (eatFood(player, next)){
+            spawnFood(SnakeApplication.playerType);
+            return;
         }
-        return state.getSnake().contains(nextHead);
+
+        snake.remove(snake.size() - 1);
     }
 
-    private void applyMove(Position nextHead) {
+    private boolean checkWallCollision(Position p) {
+        return p.row() < 0 || p.row() >= rows ||
+                p.col() < 0 || p.col() >= cols;
+    }
 
-        state.getSnake().add(0, nextHead);
+    private boolean checkSnakeCollision(Position p, List<Position> snake) {
+        return snake.contains(p);
+    }
 
-        if (!nextHead.equals(state.getFood())) {
-            state.getSnake().remove(state.getSnake().size() - 1);
+    private boolean checkEnemyCollision(Position p, PlayerType player) {
+        if (player == PlayerType.SINGLE_PLAYER) {
+            return false;
+        }
+        if (player == PlayerType.PLAYER_1) {
+            return state.getSnakeP2().contains(p);
+        }
+        if (player == PlayerType.PLAYER_2) {
+            return state.getSnakeP1().contains(p);
+        }
+        return false;
+    }
+
+    private boolean eatFood(PlayerType player, Position head) {
+
+        if ((player == PlayerType.SINGLE_PLAYER || player == PlayerType.PLAYER_1) && head.equals(state.getFood1())) {
+                addScore(player);
+                spawnFood1();
+                return true;
+            }
+        // MULTIPLAYER - both fruits
+        if (player != PlayerType.SINGLE_PLAYER && head.equals(state.getFood2())) {
+                addScore(player);
+                spawnFood2();
+                return true;
+            }
+
+        return false;
+    }
+
+    private void addScore(PlayerType player) {
+        if (player == PlayerType.PLAYER_1) {
+            state.setScoreP1(state.getScoreP1() + 10);
         } else {
-            state.setScore(state.getScore() + 10);
-            spawnFood();
+            state.setScoreP2(state.getScoreP2() + 10);
+        }
+    }
+    private void spawnFood(PlayerType mode) {
+        spawnFood1();
+        if (mode != PlayerType.SINGLE_PLAYER) {
+            spawnFood2();
+        } else {
+            state.setFood2(null);
         }
     }
 
-    private void spawnFood() {
-        Position food;
-        do {
-            food = new Position(
-                    random.nextInt(cols),
-                    random.nextInt(rows)
-            );
-        } while (state.getSnake().contains(food));
-
-        state.setFood(food);
+    private void spawnFood1() {
+        state.setFood1(randomFreePosition());
     }
 
-    public void changeDirection(Direction direction) {
-        state.setDirection(direction);
+    private void spawnFood2() {
+        state.setFood2(randomFreePosition());
+    }
+
+    private Position randomFreePosition() {
+        Position p;
+        do {
+            p = new Position(
+            random.nextInt(cols),
+            random.nextInt(rows));
+        } while (
+                state.getSnakeP1().contains(p) ||
+                        state.getSnakeP2().contains(p)
+        );
+        return p;
+    }
+
+    public void changeDirectionP1(Direction d) {
+        state.setChangeDirectionP1(d);
+    }
+
+    public void changeDirectionP2(Direction d) {
+        state.setChangeDirectionP2(d);
     }
 
     public void togglePause() {
-        if(state.isGameOver()) return;
-        state.setPaused(!state.isPaused());
+        if (!state.isGameOver()) {
+            state.setPaused(!state.isPaused());
+        }
     }
-    @FXML
+
     public void newGame() {
-        state.getSnake().clear();
-        state.getSnake().add(new Position(5, 5));
-        state.setScore(0);
+        state.getSnakeP1().clear();
+        state.getSnakeP1().add(new Position(5, 5));
+        state.setChangeDirectionP1(Direction.RIGHT);
+        state.setScoreP1(0);
+
+        if (state.getWinner() != PlayerType.SINGLE_PLAYER) {
+            state.getSnakeP2().clear();
+            state.getSnakeP2().add(new Position(15, 15));
+            state.setChangeDirectionP2(Direction.LEFT);
+            state.setScoreP2(0);
+        } else {
+            // SINGLE PLAYER → nema P2 zmije
+            state.getSnakeP2().clear();
+        }
+        state.setPaused(true);
         state.setRunning(true);
-        state.setPaused(false);
         state.setGameOver(false);
-        state.setDirection(Direction.RIGHT);
-        spawnFood();
+        state.setWinner(null);
+
+        if (SnakeApplication.playerType == PlayerType.SINGLE_PLAYER) {
+            spawnFood1();
+        } else {
+            spawnFood(SnakeApplication.playerType);
+        }
+    }
+
+    private void finishGame(PlayerType winner) {
+        state.setGameOver(true);
+        state.setRunning(false);
+        state.setWinner(winner);
     }
 
     public void loadGameState(GameState loaded) {
-        state.getSnake().clear();
-        state.getSnake().addAll(loaded.getSnake());
-
-        state.setFood(loaded.getFood());
-        state.setDirection(loaded.getDirection());
-        state.setScore(loaded.getScore());
-        state.setRunning(loaded.isRunning());
-        state.setPaused(loaded.isPaused());
-        state.setGameOver(loaded.isGameOver());
+        this.state = loaded;
     }
-
 }
 

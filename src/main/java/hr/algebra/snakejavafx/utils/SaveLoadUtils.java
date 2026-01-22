@@ -7,9 +7,7 @@ import java.io.*;
 public class SaveLoadUtils {
     private SaveLoadUtils() {
     }
-
     private static final String SAVE_FILE = "game/snake.dat";
-
 
     public static void saveGame(GameState gameState) {
         try (ObjectOutputStream oos =

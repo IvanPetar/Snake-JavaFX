@@ -6,39 +6,40 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
-            prefWidth="750.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="hr.algebra.snakejavafx.SnakeController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.snakejavafx.SnakeController">
     <children>
-        <Canvas fx:id="gameCanvas" height="642.0" layoutX="14.0" layoutY="44.0" width="584.0"
-                AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="44.0"/>
-        <VBox layoutX="604.0" layoutY="75.0" prefHeight="354.0" prefWidth="122.0" spacing="10.0"
-              AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <Canvas fx:id="gameCanvas" height="433.0" layoutX="14.0" layoutY="44.0" width="584.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="44.0" />
+        <VBox layoutX="604.0" layoutY="75.0" prefHeight="354.0" prefWidth="122.0" spacing="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
-                <Label alignment="TOP_LEFT" prefHeight="27.0" prefWidth="60.0" text="Score:"/>
-                <Label fx:id="scoreLabel" alignment="CENTER" prefHeight="50.0" prefWidth="122.0" text="0"/>
-                <Button fx:id="pauseBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
-                        onAction="#onPause" prefHeight="26.0" prefWidth="122.0" text="Pause"/>
+                <Label alignment="TOP_LEFT" prefHeight="27.0" prefWidth="60.0" text="Score:" />
+                <Label fx:id="scoreLabel" alignment="CENTER" prefHeight="50.0" prefWidth="122.0" text="0" />
+                <Button fx:id="pauseBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onPause" prefHeight="26.0" prefWidth="122.0" text="Pause" />
             </children>
         </VBox>
         <MenuBar layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="578.0">
             <menus>
                 <Menu mnemonicParsing="false" text="Game">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#startNewGame" text="New"/>
-                        <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Save"/>
-                        <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Load"/>
+                        <MenuItem mnemonicParsing="false" onAction="#onStartGame" text="Start Game" />
+                        <MenuItem mnemonicParsing="false" onAction="#startNewGame" text="New" />
+                        <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Save" />
+                        <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Load" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Documentation">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#generateDocumentation" text="Generate"/>
+                        <MenuItem mnemonicParsing="false" onAction="#generateDocumentation" text="Generate" />
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
+      <TextField fx:id="chatMessageTextField" layoutX="29.0" layoutY="496.0" prefHeight="26.0" prefWidth="525.0" />
+      <TextArea fx:id="chatMessageTextArea" layoutX="29.0" layoutY="541.0" prefHeight="126.0" prefWidth="526.0" />
+      <Button layoutX="582.0" layoutY="497.0" mnemonicParsing="false" onAction="#sendChatMessage" text="Send message" />
     </children>
 </AnchorPane>
