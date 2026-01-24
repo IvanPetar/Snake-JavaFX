@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!ELEMENT SnakeMoves (Move+)>
+<!ELEMENT Move (Direction, PositionX, PositionY)>
+<!ELEMENT Direction (#PCDATA)>
+<!ELEMENT PositionX (#PCDATA)>
+<!ELEMENT PositionY (#PCDATA)>

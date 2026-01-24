@@ -94,7 +94,7 @@ public class SnakeNetworkUtils {
         }
     }
 
-    //PLAYER 2 SERVER – prima GameState od PLAYER_1
+    //PLAYER 2 SERVER – getting GameState od PLAYER_1
     public static void startClientListener() {
         new Thread(() -> {
             int port = ConfigurationReader.getIntegerValueForKey(

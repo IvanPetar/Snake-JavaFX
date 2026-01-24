@@ -5,6 +5,7 @@ import hr.algebra.snakejavafx.model.Direction;
 import hr.algebra.snakejavafx.model.GameState;
 import hr.algebra.snakejavafx.model.PlayerType;
 import hr.algebra.snakejavafx.model.Position;
+import hr.algebra.snakejavafx.utils.SnakeXmlUtils;
 import lombok.Getter;
 
 import java.util.List;
@@ -61,6 +62,13 @@ public class GameEngine {
         }
 
         snake.add(0, next);
+
+        //XML
+        SnakeXmlUtils.saveMoveAsync(
+                direction,
+                next.col(),
+                next.row()
+        );
 
         if (eatFood(player, next)){
             spawnFood(SnakeApplication.playerType);

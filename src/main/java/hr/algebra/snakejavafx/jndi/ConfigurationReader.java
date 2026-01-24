@@ -2,7 +2,6 @@ package hr.algebra.snakejavafx.jndi;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;

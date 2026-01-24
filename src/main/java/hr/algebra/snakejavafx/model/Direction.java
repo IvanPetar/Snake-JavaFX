@@ -6,6 +6,7 @@ public enum Direction {
     LEFT(-1, 0),
     RIGHT(1, 0);
 
+    //change on grid
     private final int dx;
     private final int dy;
 

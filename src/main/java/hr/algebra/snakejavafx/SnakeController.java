@@ -243,7 +243,7 @@ public class SnakeController {
 
     public void startNewGame() {
         if (SnakeApplication.playerType == PlayerType.PLAYER_2) {
-            return; // PLAYER_2 ne resetira igru
+            return; // PLAYER_2 not reset
         }
         engine.newGame();
         engine.getState().setPaused(true);
@@ -288,7 +288,7 @@ public class SnakeController {
         Platform.runLater(() -> {
             remoteState = received;
 
-            // PLAYER_2 samo PRIKAZUJE, ne simulira
+            // PLAYER_2 just show not restore
             if (SnakeApplication.playerType == PlayerType.PLAYER_2) {
                 instance.render();
             }
